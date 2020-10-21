@@ -50,6 +50,26 @@ class App extends React.Component {
     this.setState({ selectedPoll: poll });
   };
 
+  getOpinion = (response) => {
+    const { polls } = this.state;
+    const poll = polls.find((p) => p.id === response.pollId);
+    const option = poll.opinions.find(
+      (opt) => opt.id === response.selectedOption
+    );
+
+    poll.totalVote++;
+    option.vote++;
+
+    const opinion = {
+      id: shortid.generate(),
+      name: response.name,
+      selectedOption: response.selectedOption,
+    };
+
+    poll.opinions.push(opinion);
+    this.setState({ polls });
+  };
+
   handleSearch = (searchTerm) => {};
 
   render() {
@@ -61,12 +81,17 @@ class App extends React.Component {
               polls={this.state.polls}
               searchTerm={this.state.searchTerm}
               handleSearch={this.handleSearch}
-              selectedPoll={this.selectPoll}
+              selectPoll={this.selectPoll}
               addNewPoll={this.addNewPoll}
             />
           </Col>
           <Col md={8}>
-            <MainContent />
+            <MainContent
+              poll={this.state.selectedPoll}
+              getOpinion={this.getOpinion}
+              updatePoll={this.updatePoll}
+              deletePoll={this.deletePoll}
+            />
           </Col>
         </Row>
       </Container>

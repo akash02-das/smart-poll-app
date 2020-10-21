@@ -62,6 +62,7 @@ class App extends React.Component {
               searchTerm={this.state.searchTerm}
               handleSearch={this.handleSearch}
               selectedPoll={this.selectPoll}
+              addNewPoll={this.addNewPoll}
             />
           </Col>
           <Col md={8}>

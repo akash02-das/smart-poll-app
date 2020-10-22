@@ -1,5 +1,6 @@
 import React from "react";
 import shortid from "shortid";
+import swal from "sweetalert";
 import { Container, Row, Col } from "reactstrap";
 
 import Sidebar from "./components/sidebar/index";
@@ -43,6 +44,8 @@ class App extends React.Component {
   deletePoll = (pollId) => {
     const polls = this.state.polls.filter((p) => p.id !== pollId);
     this.setState({ polls, selectedPoll: {} });
+
+    swal("Certainly!", "Deleted successfully!", "success");
   };
 
   selectPoll = (pollId) => {
@@ -53,7 +56,7 @@ class App extends React.Component {
   getOpinion = (response) => {
     const { polls } = this.state;
     const poll = polls.find((p) => p.id === response.pollId);
-    const option = poll.opinions.find(
+    const option = poll.options.find(
       (opt) => opt.id === response.selectedOption
     );
 
@@ -70,15 +73,25 @@ class App extends React.Component {
     this.setState({ polls });
   };
 
-  handleSearch = (searchTerm) => {};
+  handleSearch = (searchTerm) => {
+    this.setState({ searchTerm });
+  };
+
+  performSearch = () => {
+    return this.state.polls.filter((poll) =>
+      poll.title.toLowerCase().includes(this.state.searchTerm.toLowerCase())
+    );
+  };
 
   render() {
+    const polls = this.performSearch();
+
     return (
       <Container className="my-5">
         <Row>
           <Col md={4}>
             <Sidebar
-              polls={this.state.polls}
+              polls={polls}
               searchTerm={this.state.searchTerm}
               handleSearch={this.handleSearch}
               selectPoll={this.selectPoll}

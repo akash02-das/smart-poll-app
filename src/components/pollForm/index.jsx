@@ -17,6 +17,18 @@ class PollForm extends React.Component {
     errors: {},
   };
 
+  componentDidMount() {
+    const { poll } = this.props;
+
+    if (poll && Object.keys(poll).length > 0) {
+      this.setState({
+        title: poll.title,
+        description: poll.description,
+        options: poll.options,
+      });
+    }
+  }
+
   handleChange = (event) => {
     this.setState({
       [event.target.name]: event.target.value,
@@ -41,7 +53,6 @@ class PollForm extends React.Component {
       });
       this.setState({ options });
     } else {
-      //   alert("You can create maximum 5 options");
       swal("Alert!", "You can create maximum 5 options!", "warning");
     }
   };
@@ -53,7 +64,6 @@ class PollForm extends React.Component {
       options.splice(index, 1);
       this.setState({ options });
     } else {
-      //   alert("You must have at least 2 options");
       swal("Alert!", "You must have at least 2 options!", "warning");
     }
   };
@@ -65,17 +75,25 @@ class PollForm extends React.Component {
 
     if (isValid) {
       const { title, description, options } = this.state;
-      this.props.submit({ title, description, options });
+      const poll = { title, description, options };
 
-      event.target.reset();
-      this.setState({
-        title: "",
-        description: "",
-        options: defaultOptions,
-        errors: {},
-      });
-      //   alert("Poll created successfully!");
-      swal("Good job!", "Poll created successfully!", "success");
+      if (this.props.isUpdate) {
+        poll.id = this.props.poll.id;
+        this.props.submit(poll);
+
+        swal("Good job!", "Updated successfully!", "success");
+      } else {
+        this.props.submit(poll);
+
+        event.target.reset();
+        this.setState({
+          title: "",
+          description: "",
+          options: defaultOptions,
+          errors: {},
+        });
+        swal("Great", "Poll created successfully!", "success");
+      }
     } else {
       this.setState({ errors });
     }
